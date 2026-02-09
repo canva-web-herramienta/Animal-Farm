@@ -136,10 +136,13 @@
 
     const ref = window.Telegram?.WebApp?.initDataUnsafe?.start_param;
 
-    if(ref && !localStorage.getItem("refUsed")){
-      localStorage.setItem("refUsed", ref);
-      localStorage.setItem("bonusRef", "1");
-    }
+// GUARDAR REFERIDO (DEMO)
+if(ref && !localStorage.getItem("refUsed")){
+  localStorage.setItem("refUsed", ref);
+  localStorage.setItem("bonusRef", "1");
+}
+
+    
 
     const myRef = localStorage.getItem("myRef") || Math.random().toString(36).substring(2,10);
     localStorage.setItem("myRef", myRef);
@@ -147,6 +150,8 @@
     const BOT_USERNAME = "TU_BOT_USERNAME"; // sin @
 
 const refLink = `https://t.me/${BOT_USERNAME}?startapp=${myRef}`;
+document.getElementById("refLink").textContent =
+  "Tu link de referido: " + refLink;
 
 
     const balanceEl = document.getElementById("balance");
@@ -242,5 +247,6 @@ const refLink = `https://t.me/${BOT_USERNAME}?startapp=${myRef}`;
   </script>
 </body>
 </html>
+
 
 
