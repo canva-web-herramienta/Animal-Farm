@@ -129,24 +129,31 @@
       { name: "Gato", price: 30, production: 1.5, img: "https://cdn-icons-png.flaticon.com/512/616/616408.png" }
     ];
 
-    let balance = Number(localStorage.getItem("balance")) || 5;
+    let balance = Number(localStorage.getItem("balance")) || 0;
     let earned = Number(localStorage.getItem("earned")) || 0;
     let owned = JSON.parse(localStorage.getItem("owned")) || [0,0,0,0];
     let refs = Number(localStorage.getItem("refs")) || 0;
 
-    const params = new URLSearchParams(window.location.search);
-    const ref = params.get("ref");
+    /* REFERIDOS TELEGRAM */
+const ref = tg.initDataUnsafe?.start_param;
 
-    if(ref && !localStorage.getItem("refUsed")){
-      localStorage.setItem("refUsed", ref);
-      localStorage.setItem("bonusRef", "1");
-    }
+if (ref && !localStorage.getItem("refUsed")) {
+  localStorage.setItem("refUsed", ref);
+  refs++;
+}
 
-    const myRef = localStorage.getItem("myRef") || Math.random().toString(36).substring(2,10);
-    localStorage.setItem("myRef", myRef);
+const myRef = localStorage.getItem("myRef") || Math.random().toString(36).substring(2,10);
+localStorage.setItem("myRef", myRef);
 
-    const refLink = window.location.origin + window.location.pathname + "?ref=" + myRef;
-    document.getElementById("refLink").textContent = "Tu enlace: " + refLink;
+const refLink = `https://t.me/${AnimalFarm10_bot}?startapp=${myRef}`;
+
+const refBox = document.getElementById("refLink");
+refBox.innerHTML = `Tu enlace:<br>${refLink}<br><small>(toca para copiar)</small>`;
+
+refBox.onclick = () => {
+  navigator.clipboard.writeText(refLink);
+  alert("Link copiado 📋");
+};
 
     const balanceEl = document.getElementById("balance");
     const perSecEl = document.getElementById("perSec");
@@ -250,6 +257,7 @@
  
    
   
+
 
 
 
