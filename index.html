@@ -129,7 +129,7 @@
       { name: "Gato", price: 30, production: 1.5, img: "https://cdn-icons-png.flaticon.com/512/616/616408.png" }
     ];
 
-    let balance = Number(localStorage.getItem("balance")) || 5;
+    let balance = Number(localStorage.getItem("balance")) || 0;
     let earned = Number(localStorage.getItem("earned")) || 0;
     let owned = JSON.parse(localStorage.getItem("owned")) || [0,0,0,0];
     let refs = Number(localStorage.getItem("refs")) || 0;
@@ -241,3 +241,4 @@
   </script>
 </body>
 </html>
+
