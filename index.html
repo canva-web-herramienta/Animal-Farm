@@ -134,11 +134,7 @@
     let owned = JSON.parse(localStorage.getItem("owned")) || [0,0,0,0];
     let refs = Number(localStorage.getItem("refs")) || 0;
 
-    function copyRef(){
-  navigator.clipboard.writeText(refLink)
-    .then(() => alert("Link copiado 📋"))
-    .catch(() => alert("No se pudo copiar"));
-}
+   
 
 
     const ref = window.Telegram?.WebApp?.initDataUnsafe?.start_param;
@@ -161,7 +157,11 @@ document.getElementById("refLink").innerHTML =
   `Tu enlace:<br><b style="cursor:pointer;color:#ffd166" onclick="copyRef()">${refLink}</b><br>
    <small>(toca el link para copiar)</small>`;
 
-
+ function copyRef(){
+  navigator.clipboard.writeText(refLink)
+    .then(() => alert("Link copiado 📋"))
+    .catch(() => alert("No se pudo copiar"));
+}
 
     const balanceEl = document.getElementById("balance");
     const perSecEl = document.getElementById("perSec");
@@ -256,6 +256,7 @@ document.getElementById("refLink").innerHTML =
   </script>
 </body>
 </html>
+
 
 
 
