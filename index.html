@@ -19,14 +19,14 @@
       position: relative;
     }
 
-    .farm-bg {
-      position: fixed;
-      inset: 0;
-      z-index: -1;
-      background: url('farm.jpg') repeat-x bottom/contain;
-      animation: moveFarm 60s linear infinite;
-      opacity: 0.9;
-    }
+   .farm-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: url('farm.jpg') center center / cover no-repeat;
+  opacity: 0.95;
+}
+
 
     @keyframes moveFarm {
       from { background-position-x: 0; }
@@ -259,6 +259,7 @@ refBox.onclick = () => {
  
    
   
+
 
 
 
