@@ -184,6 +184,10 @@ refBox.onclick = () => {
     }
 
     async function buy(i) {
+if (!tonConnectUI.connected) {
+  alert("Primero conecta tu billetera TON");
+  return;
+}
 
   const priceTON = animals[i].price;
 
@@ -215,6 +219,11 @@ refBox.onclick = () => {
     
 
     async function withdraw(){
+      if (!tonConnectUI.connected) {
+  alert("Primero conecta tu billetera TON");
+  return;
+}
+
       if(balance < 1){ alert("Mínimo retiro: 1 TON"); return; }
 
       const transaction = {
@@ -281,6 +290,7 @@ refBox.onclick = () => {
  
    
   
+
 
 
 
