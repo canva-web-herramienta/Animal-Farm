@@ -134,8 +134,7 @@
     let owned = JSON.parse(localStorage.getItem("owned")) || [0,0,0,0];
     let refs = Number(localStorage.getItem("refs")) || 0;
 
-    const params = new URLSearchParams(window.location.search);
-    const ref = params.get("ref");
+    const ref = window.Telegram?.WebApp?.initDataUnsafe?.start_param;
 
     if(ref && !localStorage.getItem("refUsed")){
       localStorage.setItem("refUsed", ref);
@@ -145,8 +144,10 @@
     const myRef = localStorage.getItem("myRef") || Math.random().toString(36).substring(2,10);
     localStorage.setItem("myRef", myRef);
 
-    const refLink = window.location.origin + window.location.pathname + "?ref=" + myRef;
-    document.getElementById("refLink").textContent = "Tu enlace: " + refLink;
+    const BOT_USERNAME = "TU_BOT_USERNAME"; // sin @
+
+const refLink = `https://t.me/${BOT_USERNAME}?startapp=${myRef}`;
+
 
     const balanceEl = document.getElementById("balance");
     const perSecEl = document.getElementById("perSec");
@@ -241,4 +242,5 @@
   </script>
 </body>
 </html>
+
 
