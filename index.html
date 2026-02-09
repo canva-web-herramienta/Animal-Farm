@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Animal Farm</title>
+  <title>Rebelión en la granja</title>
 
   <!-- Telegram -->
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -22,14 +22,6 @@
       align-items: center;
       min-height: 100vh;
     }
-.farm-bg {
-      position: fixed;
-      inset: 0;
-      z-index: -1;
-      background: url('farm.jpg') repeat-x bottom/contain;
-      animation: moveFarm 60s linear infinite;
-      opacity: 0.9;
-    }
 
     h1 { margin-top: 20px; }
 
@@ -37,42 +29,44 @@
 
     .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 14px;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
       width: 90%;
-      max-width: 800px;
+      max-width: 900px;
       margin-top: 20px;
     }
 
     .card {
       background: rgba(0,0,0,0.6);
-      border-radius: 16px;
-      padding: 14px;
+      border-radius: 18px;
+      padding: 16px;
       text-align: center;
     }
 
-    .card img { width: 80px; height: 80px; }
+    .card img { width: 90px; height: 90px; }
 
     button {
       margin-top: 10px;
-      padding: 10px 14px;
+      padding: 10px 16px;
       border: none;
-      border-radius: 10px;
-      font-weight: bold;
+      border-radius: 12px;
+      font-size: 14px;
       cursor: pointer;
+      background: linear-gradient(135deg,#ffd166,#ffb703);
+      font-weight: bold;
     }
 
     .panel {
       margin-top: 20px;
       background: rgba(0,0,0,0.6);
-      padding: 16px;
+      padding: 14px 24px;
       border-radius: 14px;
       text-align: center;
     }
 
     .ref-box {
       margin-top: 10px;
-      font-size: 13px;
+      font-size: 12px;
       word-break: break-all;
       cursor: pointer;
       color: #ffd166;
@@ -82,11 +76,11 @@
 
 <body>
 
-<h1>🐾 Animal Farm</h1>
+<h1>🐾 Rebelión en la granja 🐾</h1>
 
 <div id="ton-connect"></div>
 
-<div class="balance">Balance: <span id="balance">0</span> TON</div>
+<div class="balance">Saldo: <span id="balance">0</span> TON</div>
 <div class="balance">Producción/seg: <span id="perSec">0</span> TON</div>
 
 <div class="grid" id="shop"></div>
@@ -97,28 +91,25 @@
 
   <div id="refLink" class="ref-box"></div>
 
-  <button onclick="withdraw()">💸 Retirar</button><br><br>
-  <button onclick="claimBonus()">🎁 Bonus diario</button>
+  <button onclick="withdraw()">💸 Retirar TON</button>
+  <br/><br/>
+  <button onclick="claimBonus()">🎁 Bono diario</button>
 </div>
 
 <script>
-/* ========= CONFIGURACIÓN ========= */
-
-const BOT_USERNAME = "TU_BOT";        // ← CAMBIAR
-const WALLET_ADDRESS = "TU_WALLET";   // ← CAMBIAR
+const BOT_USERNAME = "TU_BOT";      // ← CAMBIAR
+const WALLET = "TU_WALLET";         // ← CAMBIAR
 
 const tg = window.Telegram.WebApp;
 tg.expand();
 
-/* ========= TON CONNECT ========= */
-
+/* TON CONNECT */
 const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
   manifestUrl: "https://canva-web-herramienta.github.io/Animal-Farm/tonconnect-manifest.json",
   buttonRootId: "ton-connect"
 });
 
-/* ========= ANIMALES ========= */
-
+/* ANIMALES */
 const animals = [
   { name: "Gallo", price: 3, production: 0.1, img: "https://images.emojiterra.com/google/noto-emoji/unicode-16.0/color/svg/1f413.svg" },
   { name: "Oveja", price: 10, production: 0.4, img: "https://cdn-icons-png.flaticon.com/512/1998/1998610.png" },
@@ -126,15 +117,13 @@ const animals = [
   { name: "Gato", price: 30, production: 1.5, img: "https://cdn-icons-png.flaticon.com/512/616/616408.png" }
 ];
 
-/* ========= DATOS ========= */
-
+/* DATOS */
 let balance = Number(localStorage.getItem("balance")) || 0;
-let earned  = Number(localStorage.getItem("earned"))  || 0;
+let earned  = Number(localStorage.getItem("earned")) || 0;
 let owned   = JSON.parse(localStorage.getItem("owned")) || [0,0,0,0];
 let refs    = Number(localStorage.getItem("refs")) || 0;
 
-/* ========= REFERIDOS TELEGRAM ========= */
-
+/* REFERIDOS TELEGRAM */
 const ref = tg.initDataUnsafe?.start_param;
 
 if (ref && !localStorage.getItem("refUsed")) {
@@ -148,21 +137,14 @@ localStorage.setItem("myRef", myRef);
 const refLink = `https://t.me/${BOT_USERNAME}?startapp=${myRef}`;
 
 const refBox = document.getElementById("refLink");
-refBox.innerHTML = `Tu link de referido:<br>${refLink}<br><small>(toca para copiar)</small>`;
+refBox.innerHTML = `Tu enlace:<br>${refLink}<br><small>(toca para copiar)</small>`;
 
 refBox.onclick = () => {
   navigator.clipboard.writeText(refLink);
   alert("Link copiado 📋");
 };
 
-/* ========= UI ========= */
-
-const balanceEl = document.getElementById("balance");
-const perSecEl  = document.getElementById("perSec");
-const earnedEl  = document.getElementById("earned");
-const refsEl    = document.getElementById("refs");
-const shopEl    = document.getElementById("shop");
-
+/* FUNCIONES */
 function save(){
   localStorage.setItem("balance", balance);
   localStorage.setItem("earned", earned);
@@ -176,13 +158,11 @@ function calcPerSec(){
 }
 
 function updateUI(){
-  balanceEl.textContent = balance.toFixed(4);
-  perSecEl.textContent  = calcPerSec().toFixed(6);
-  earnedEl.textContent  = earned.toFixed(4);
-  refsEl.textContent    = refs;
+  document.getElementById("balance").textContent = balance.toFixed(4);
+  document.getElementById("perSec").textContent = calcPerSec().toFixed(6);
+  document.getElementById("earned").textContent = earned.toFixed(4);
+  document.getElementById("refs").textContent = refs;
 }
-
-/* ========= COMPRAR ========= */
 
 function buy(i){
   if(balance >= animals[i].price){
@@ -194,15 +174,14 @@ function buy(i){
   }
 }
 
-/* ========= RETIRO TON ========= */
-
+/* RETIRO TON */
 async function withdraw(){
   if(balance < 1) return alert("Mínimo retiro: 1 TON");
 
   const tx = {
     validUntil: Math.floor(Date.now()/1000) + 300,
     messages: [{
-      address: WALLET_ADDRESS,
+      address: WALLET,
       amount: (balance * 1e9).toString()
     }]
   };
@@ -218,8 +197,7 @@ async function withdraw(){
   }
 }
 
-/* ========= BONUS ========= */
-
+/* BONUS */
 function claimBonus(){
   const last = Number(localStorage.getItem("bonus")) || 0;
   const now = Date.now();
@@ -231,12 +209,11 @@ function claimBonus(){
     updateUI();
     alert("Ganaste 0.5 TON 🎉");
   } else {
-    alert("Bonus ya reclamado hoy");
+    alert("Bono ya reclamado hoy");
   }
 }
 
-/* ========= TIENDA ========= */
-
+/* TIENDA */
 function renderShop(){
   animals.forEach((a,i)=>{
     const card = document.createElement("div");
@@ -249,22 +226,20 @@ function renderShop(){
       <p>Tienes: ${owned[i]}</p>
       <button onclick="buy(${i})">Comprar</button>
     `;
-    shopEl.appendChild(card);
+    document.getElementById("shop").appendChild(card);
   });
 }
 
-/* ========= MINADO ========= */
-
+/* MINADO */
 setInterval(()=>{
   const gain = calcPerSec();
   balance += gain;
-  earned  += gain;
+  earned += gain;
   save();
   updateUI();
 }, 1000);
 
-/* ========= INIT ========= */
-
+/* INIT */
 renderShop();
 updateUI();
 </script>
