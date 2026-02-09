@@ -4,21 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Animal Farm</title>
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
-
-  <!-- TonConnect SDK -->
-  <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
-
-<script>
-const tg = window.Telegram.WebApp;
-tg.expand();
-
-const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
-  manifestUrl: "https://canva-web-herramienta.github.io/Animal-Farm/tonconnect-manifest.json",
-  buttonRootId: "ton-connect"
-});
-</script>
-
 
   <style>
     body {
@@ -104,7 +89,7 @@ const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
 <body>
   <div class="farm-bg"></div>
 
-  <h1>🐾 Animal Farm 🐾 </h1>
+  <h1>🐾 Animal Farm 🐾</h1>
 
   <div id="ton-connect"></div>
 
@@ -124,9 +109,18 @@ const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
     <button onclick="claimBonus()">🎁 Bonus diario</button>
   </div>
 
+  <!-- Telegram + TonConnect (AL FINAL DEL BODY) -->
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
+
   <script>
-   
-    
+    const tg = window.Telegram.WebApp;
+    tg.expand();
+
+    const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
+      manifestUrl: "https://canva-web-herramienta.github.io/Animal-Farm/tonconnect-manifest.json",
+      buttonRootId: "ton-connect"
+    });
 
     const animals = [
       { name: "Gallo", price: 3, production: 0.1, img: "https://images.emojiterra.com/google/noto-emoji/unicode-16.0/color/svg/1f413.svg" },
@@ -152,7 +146,6 @@ const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
     localStorage.setItem("myRef", myRef);
 
     const refLink = window.location.origin + window.location.pathname + "?ref=" + myRef;
-
     document.getElementById("refLink").textContent = "Tu enlace: " + refLink;
 
     const balanceEl = document.getElementById("balance");
@@ -184,14 +177,6 @@ const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
       if(balance >= animals[i].price){
         balance -= animals[i].price;
         owned[i]++;
-
-        const inviter = localStorage.getItem("refUsed");
-        if(inviter){
-          const bonus = animals[i].price * 0.10;
-          // En versión real esto se enviaría al servidor
-          console.log("Enviar", bonus, "TON al ref", inviter);
-        }
-
         save();
         updateUI();
         location.reload();
@@ -256,7 +241,3 @@ const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
   </script>
 </body>
 </html>
-
-
-
-
