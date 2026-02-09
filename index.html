@@ -134,6 +134,13 @@
     let owned = JSON.parse(localStorage.getItem("owned")) || [0,0,0,0];
     let refs = Number(localStorage.getItem("refs")) || 0;
 
+    function copyRef(){
+  navigator.clipboard.writeText(refLink)
+    .then(() => alert("Link copiado 📋"))
+    .catch(() => alert("No se pudo copiar"));
+}
+
+
     const ref = window.Telegram?.WebApp?.initDataUnsafe?.start_param;
 
 // GUARDAR REFERIDO (DEMO)
@@ -147,11 +154,13 @@ if(ref && !localStorage.getItem("refUsed")){
     const myRef = localStorage.getItem("myRef") || Math.random().toString(36).substring(2,10);
     localStorage.setItem("myRef", myRef);
 
-    const BOT_USERNAME = "@AnimalFarm10_bot"; // sin @
+    const BOT_USERNAME = "AnimalFarm10_bot"; // sin @
 
-const refLink = `https://t.me/${@AnimalFarm10_bot}?startapp=${myRef}`;
-document.getElementById("refLink").textContent =
-  "Tu link de referido: " + refLink;
+const refLink = `https://t.me/${AnimalFarm10_bot}?startapp=${myRef}`;
+document.getElementById("refLink").innerHTML =
+  `Tu enlace:<br><b style="cursor:pointer;color:#ffd166" onclick="copyRef()">${refLink}</b><br>
+   <small>(toca el link para copiar)</small>`;
+
 
 
     const balanceEl = document.getElementById("balance");
@@ -247,6 +256,7 @@ document.getElementById("refLink").textContent =
   </script>
 </body>
 </html>
+
 
 
 
