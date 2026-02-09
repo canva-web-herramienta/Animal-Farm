@@ -4,16 +4,21 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Animal Farm</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
 
   <!-- TonConnect SDK -->
   <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
 
 <script>
+const tg = window.Telegram.WebApp;
+tg.expand();
+
 const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
   manifestUrl: "https://canva-web-herramienta.github.io/Animal-Farm/tonconnect-manifest.json",
   buttonRootId: "ton-connect"
 });
 </script>
+
 
   <style>
     body {
@@ -251,6 +256,7 @@ const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
   </script>
 </body>
 </html>
+
 
 
 
