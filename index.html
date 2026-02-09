@@ -1,249 +1,160 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Rebelión en la granja</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Rebelión en la granja</title>
 
-  <!-- Telegram -->
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(#87CEEB, #c2f0c2);
+  overflow-x: hidden;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  position: relative;
+}
 
-  <!-- TON Connect -->
-  <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
+.farm-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: url('farm.jpg') repeat-x bottom/contain;
+  animation: moveFarm 60s linear infinite;
+  opacity: 0.9;
+}
 
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: linear-gradient(#87CEEB, #c2f0c2);
-      color: white;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      min-height: 100vh;
-    }
+@keyframes moveFarm {
+  de { posición-fondo-x: 0; }
+  a { posición-fondo-x: -2000px; }
+}
 
-    h1 { margin-top: 20px; }
+h1 {
+  margen-superior: 20px;
+  sombra-texto: 0 2px 6px rgba(0,0,0,0.6);
+}
 
-    .balance { font-size: 22px; margin: 6px 0; }
+.balance {
+  tamaño-fuente: 24px;
+  margen: 6px 0;
+  sombra-texto: 0 2px 6px rgba(0,0,0,0.6);
+}
 
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 16px;
-      width: 90%;
-      max-width: 900px;
-      margin-top: 20px;
-    }
+.grid {
+  display: grid;
+  plantillas-cuadrícula-columnas: repeat(auto-ajuste, minmax(220px, 1fr));
+  espacio: 16px;
+  ancho: 90%;
+  ancho-máximo: 900px;
+  margen-superior: 20px;
+}
 
-    .card {
-      background: rgba(0,0,0,0.6);
-      border-radius: 18px;
-      padding: 16px;
-      text-align: center;
-    }
+.card {
+  fondo: rgba(0,0,0,0.55);
+  radio-borde: 18px;
+  relleno: 16px;
+  alineación del texto: centro;
+  filtro de fondo: desenfoque(6px);
+  sombra del cuadro: 0 6px 25px rgba(0,0,0,0.5);
+}
 
-    .card img { width: 90px; height: 90px; }
+.card img {
+  ancho: 90px;
+  alto: 90px;
+  ajuste al objeto: contener;
+  margen inferior: 8px;
+}
 
-    button {
-      margin-top: 10px;
-      padding: 10px 16px;
-      border: none;
-      border-radius: 12px;
-      font-size: 14px;
-      cursor: pointer;
-      background: linear-gradient(135deg,#ffd166,#ffb703);
-      font-weight: bold;
-    }
+botón {
+  margen superior: 10px;
+  relleno: 10px 16px;
+  borde: ninguno;
+  radio del borde: 12px;
+  tamaño de fuente: 14px;
+  cursor: puntero;
+  fondo: degradado lineal(135deg,#ffd166,#ffb703);
+  peso de fuente: negrita;
+}
 
-    .panel {
-      margin-top: 20px;
-      background: rgba(0,0,0,0.6);
-      padding: 14px 24px;
-      border-radius: 14px;
-      text-align: center;
-    }
+.panel {
+  margen superior: 20px;
+  fondo: rgba(0,0,0,0.6);
+  relleno: 14px 24px;
+  radio del borde: 14px;
+  tamaño de fuente: 14px;
+  alineación del texto: centro;
+}
 
-    .ref-box {
-      margin-top: 10px;
-      font-size: 12px;
-      word-break: break-all;
-      cursor: pointer;
-      color: #ffd166;
-    }
-  </style>
+.ref-box {
+  margin-top: 10px;
+  word-break: break-all;
+  font-size: 12px;
+  background: rgba(255,255,255,0.1);
+  padding: 6px;
+  border-radius: 8px;
+}
+</style>
 </head>
 
 <body>
 
-<h1>🐾 Rebelión en la granja 🐾</h1>
+<div class="farm-bg"></div>
+
+<h1>🐾 Rebelión en la Granja 🐾</h1>
 
 <div id="ton-connect"></div>
 
-<div class="balance">Saldo: <span id="balance">0</span> TON</div>
-<div class="balance">Producción/seg: <span id="perSec">0</span> TON</div>
+<div class="balance">
+  Saldo: <span id="balance">0</span> TON
+</div>
+
+<div class="balance">
+  Producción/seg: <span id="perSec">0</span> TON
+</div>
 
 <div class="grid" id="shop"></div>
 
 <div class="panel">
   <div>Total ganado: <span id="earned">0</span> TON</div>
-  <div>Referidos: <span id="refs">0</span></div>
-
-  <div id="refLink" class="ref-box"></div>
+  <div>Referidos:<span id="refs">0</span></div>
+  <div class="ref-box" id="refLink"></div>
 
   <button onclick="withdraw()">💸 Retirar TON</button>
   <br/><br/>
   <button onclick="claimBonus()">🎁 Bono diario</button>
 </div>
 
-<script>
-const BOT_USERNAME = "TU_BOT";      // ← CAMBIAR
-const WALLET = "TU_WALLET";         // ← CAMBIAR
+<!-- Telegram + TonConnect -->
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
 
+<script>
 const tg = window.Telegram.WebApp;
 tg.expand();
 
-/* TON CONNECT */
 const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
   manifestUrl: "https://canva-web-herramienta.github.io/Animal-Farm/tonconnect-manifest.json",
   buttonRootId: "ton-connect"
 });
 
-/* ANIMALES */
 const animals = [
-  { name: "Gallo", price: 3, production: 0.1, img: "https://images.emojiterra.com/google/noto-emoji/unicode-16.0/color/svg/1f413.svg" },
-  { name: "Oveja", price: 10, production: 0.4, img: "https://cdn-icons-png.flaticon.com/512/1998/1998610.png" },
-  { name: "Perro", price: 20, production: 1, img: "https://cdn-icons-png.flaticon.com/512/616/616430.png" },
-  { name: "Gato", price: 30, production: 1.5, img: "https://cdn-icons-png.flaticon.com/512/616/616408.png" }
+  { nombre: "Gallo", precio: 3, producción: 0.1, img: "https://images.emojiterra.com/google/noto-emoji/unicode-16.0/color/svg/1f413.svg" },
+  { nombre: "Oveja", precio: 10, producción: 0.4, img: "https://cdn-icons-png.flaticon.com/512/1998/1998610.png" },
+  { nombre: "Perro", precio: 20, producción: 1, img: "https://cdn-icons-png.flaticon.com/512/616/616430.png" },
+  { nombre: "Gato", precio: 30, producción: 1.5, img: "https://cdn-icons-png.flaticon.com/512/616/616408.png" }
 ];
 
-/* DATOS */
-let balance = Number(localStorage.getItem("balance")) || 0;
-let earned  = Number(localStorage.getItem("earned")) || 0;
-let owned   = JSON.parse(localStorage.getItem("owned")) || [0,0,0,0];
-let refs    = Number(localStorage.getItem("refs")) || 0;
+let saldo = Número(localStorage.getItem("saldo")) || 0;
+let ganado = Número(localStorage.getItem("ganado")) || 0;
+let propio = JSON.parse(localStorage.getItem("propiedad")) || [0,0,0,0];
+let referencias = Número(localStorage.getItem("referencias")) || 0;
 
-/* REFERIDOS TELEGRAM */
-const ref = tg.initDataUnsafe?.start_param;
-
-if (ref && !localStorage.getItem("refUsed")) {
-  localStorage.setItem("refUsed", ref);
-  refs++;
-}
-
-const myRef = localStorage.getItem("myRef") || Math.random().toString(36).substring(2,10);
-localStorage.setItem("myRef", myRef);
-
-const refLink = `https://t.me/${BOT_USERNAME}?startapp=${myRef}`;
-
-const refBox = document.getElementById("refLink");
-refBox.innerHTML = `Tu enlace:<br>${refLink}<br><small>(toca para copiar)</small>`;
-
-refBox.onclick = () => {
-  navigator.clipboard.writeText(refLink);
-  alert("Link copiado 📋");
-};
-
-/* FUNCIONES */
-function save(){
-  localStorage.setItem("balance", balance);
-  localStorage.setItem("earned", earned);
-  localStorage.setItem("owned", JSON.stringify(owned));
-  localStorage.setItem("refs", refs);
-}
-
-function calcPerSec(){
-  let perDay = animals.reduce((s,a,i)=> s + a.production * owned[i],0);
-  return perDay / 86400;
-}
-
-function updateUI(){
-  document.getElementById("balance").textContent = balance.toFixed(4);
-  document.getElementById("perSec").textContent = calcPerSec().toFixed(6);
-  document.getElementById("earned").textContent = earned.toFixed(4);
-  document.getElementById("refs").textContent = refs;
-}
-
-function buy(i){
-  if(balance >= animals[i].price){
-    balance -= animals[i].price;
-    owned[i]++;
-    save();
-    updateUI();
-    location.reload();
-  }
-}
-
-/* RETIRO TON */
-async function withdraw(){
-  if(balance < 1) return alert("Mínimo retiro: 1 TON");
-
-  const tx = {
-    validUntil: Math.floor(Date.now()/1000) + 300,
-    messages: [{
-      address: WALLET,
-      amount: (balance * 1e9).toString()
-    }]
-  };
-
-  try {
-    await tonConnectUI.sendTransaction(tx);
-    balance = 0;
-    save();
-    updateUI();
-    alert("Retiro enviado 🚀");
-  } catch {
-    alert("Error en retiro");
-  }
-}
-
-/* BONUS */
-function claimBonus(){
-  const last = Number(localStorage.getItem("bonus")) || 0;
-  const now = Date.now();
-
-  if(now - last > 86400000){
-    balance += 0.5;
-    localStorage.setItem("bonus", now);
-    save();
-    updateUI();
-    alert("Ganaste 0.5 TON 🎉");
-  } else {
-    alert("Bono ya reclamado hoy");
-  }
-}
-
-/* TIENDA */
-function renderShop(){
-  animals.forEach((a,i)=>{
-    const card = document.createElement("div");
-    card.className = "card";
-    card.innerHTML = `
-      <img src="${a.img}">
-      <h3>${a.name}</h3>
-      <p>Precio: ${a.price} TON</p>
-      <p>Producción: ${a.production} TON/día</p>
-      <p>Tienes: ${owned[i]}</p>
-      <button onclick="buy(${i})">Comprar</button>
-    `;
-    document.getElementById("shop").appendChild(card);
-  });
-}
-
-/* MINADO */
-setInterval(()=>{
-  const gain = calcPerSec();
-  balance += gain;
-  earned += gain;
-  save();
-  updateUI();
-}, 1000);
-
-/* INIT */
-renderShop();
-updateUI();
+const referencia = ventana.Telegram?.WebApp?.initDataUnsafe?.start_param;
 </script>
 
 </body>
 </html>
-
