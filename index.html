@@ -183,14 +183,35 @@ refBox.onclick = () => {
       refsEl.textContent = refs;
     }
 
-    function buy(i){
-      if(balance >= animals[i].price){
-        balance -= animals[i].price;
-        owned[i]++;
-        save();
-        updateUI();
-        location.reload();
+    async function buy(i) {
+
+  const priceTON = animals[i].price;
+
+  const transaction = {
+    validUntil: Math.floor(Date.now() / 1000) + 300,
+    messages: [
+      {
+        address: "TU_WALLET_TON_AQUI", // ← tu wallet donde recibirás el pago
+        amount: (priceTON * 1e9).toString()
       }
+    ]
+  };
+
+  try {
+    await tonConnectUI.sendTransaction(transaction);
+
+    // solo después del pago exitoso
+    owned[i]++;
+    save();
+    updateUI();
+
+    alert("Compra realizada con exito 🐾");
+
+  } catch (e) {
+    alert("Pago cancelado o error en la wallet");
+  }
+}
+
     }
 
     async function withdraw(){
@@ -260,6 +281,7 @@ refBox.onclick = () => {
  
    
   
+
 
 
 
